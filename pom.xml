@@ -7,6 +7,12 @@
     <artifactId>ebodac-uitestframework</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <properties>
+        <scm.connection>scm:git:https://github.com/motech/UITestFramework.git</scm.connection>
+        <scm.developerConnection>scm:git:https://github.com/motech/UITestFramework.git</scm.developerConnection>
+        <scm.url>https://github.com/motech/UITestFramework</scm.url>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -78,4 +84,73 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <repositories>
+        <repository>
+            <id>motech-repo</id>
+            <name>MOTECH Maven Repository</name>
+            <url>http://nexus.motechproject.org/content/repositories/public</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>motech-repo</id>
+            <name>MOTECH Maven Repository</name>
+            <url>http://nexus.motechproject.org/content/repositories/public</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <distributionManagement>
+        <repository>
+            <id>motech.nexus</id>
+            <name>MOTECH Releases Repository</name>
+            <url>http://nexus.motechproject.org/content/repositories/releases</url>
+            <uniqueVersion>false</uniqueVersion>
+        </repository>
+        <snapshotRepository>
+            <id>motech.nexus</id>
+            <name>MOTECH Snapshots Repository</name>
+            <url>http://nexus.motechproject.org/content/repositories/snapshots</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <!-- License -->
+    <licenses>
+        <license>
+            <name>MOTECH PLATFORM OPENSOURCE LICENSE AGREEMENT</name>
+            <url>license.txt</url>
+        </license>
+    </licenses>
+
+    <organization>
+        <name>Grameen Foundation</name>
+        <url>http://grameenfoundation.org/</url>
+    </organization>
+
+    <ciManagement>
+        <system>Jenkins</system>
+        <url>http://ci.motechproject.org/</url>
+    </ciManagement>
+
+    <mailingLists>
+        <mailingList>
+            <name>MOTECH Dev</name>
+            <subscribe>motech-dev+subscribe@googlegroups.com</subscribe>
+            <unsubscribe>motech-dev+unsubscribe@googlegroups.com</unsubscribe>
+            <post>motech-dev@googlegroups.com</post>
+            <archive>http://groups.google.com/group/motech-dev</archive>
+        </mailingList>
+    </mailingLists>
+    
+    <scm>
+        <connection>${scm.connection}</connection>
+        <developerConnection>${scm.developerConnection}</developerConnection>
+        <url>${scm.url}</url>
+        <tag>HEAD</tag>
+    </scm>
 </project>
