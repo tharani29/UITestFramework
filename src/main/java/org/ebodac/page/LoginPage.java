@@ -1,9 +1,9 @@
-package org.ebodac.page.testpages;
+package org.ebodac.page;
 
 
 import org.ebodac.page.AbstractBasePage;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriver;import java.lang.InterruptedException;import java.lang.Override;import java.lang.String;
 
 public class LoginPage extends AbstractBasePage {
 

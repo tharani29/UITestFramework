@@ -24,9 +24,17 @@
         <processorPath useClasspath="true" />
         <module name="ebodac-uitestframework" />
       </profile>
+      <profile default="false" name="Annotation profile for UITestFramework" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="UITestFramework" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="ebodac-uitestframework" target="1.6" />
+      <module name="UITestFramework" target="1.6" />
     </bytecodeTargetLevel>
   </component>
 </project>

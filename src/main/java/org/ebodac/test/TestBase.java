@@ -7,7 +7,7 @@ import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 import org.ebodac.page.GenericPage;
-import org.ebodac.page.testpages.LoginPage;
+import org.ebodac.page.LoginPage;
 import org.ebodac.page.Page;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
