@@ -1,4 +1,4 @@
-package org.ebodac.page;
+package org.motech.page;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;

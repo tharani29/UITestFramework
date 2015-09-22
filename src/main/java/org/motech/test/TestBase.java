@@ -1,4 +1,4 @@
-package org.ebodac.test;
+package org.motech.test;
 
 
 import java.io.File;
@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
-import org.ebodac.page.GenericPage;
-import org.ebodac.page.LoginPage;
-import org.ebodac.page.Page;
+import org.motech.page.GenericPage;
+import org.motech.page.LoginPage;
+import org.motech.page.Page;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.io.FileUtils;

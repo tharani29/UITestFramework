@@ -1,7 +1,6 @@
-package org.ebodac.page;
+package org.motech.page;
 
 
-import org.ebodac.page.AbstractBasePage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;import java.lang.InterruptedException;import java.lang.Override;import java.lang.String;
 
@@ -20,9 +19,9 @@ public class LoginPage extends AbstractBasePage {
     }
 
     public void logOut() throws InterruptedException{
-
-        findElement(By.cssSelector("span.ng-binding")).click();
-        findElement(By.xpath("//a[@href='j_spring_security_logout']")).click();
+        waitForElement(By.cssSelector("span.ng-binding"));
+        clickWhenVisible(By.cssSelector("span.ng-binding"));
+        clickOn(By.xpath("//a[@href='j_spring_security_logout']"));
     }
 
     public void login(String user, String password, int location) {
