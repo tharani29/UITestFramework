@@ -27,7 +27,7 @@ public abstract class AbstractBasePage implements Page {
     public static final int MAX_WAIT_SECONDS = 30;
 
     protected WebDriver driver;
-    private final String serverURL="https://ebodac.soldevelo.com/module/server";
+    private final String serverURL="https://ebodac-pre-prod.soldevelo.com/module/server";
     protected WebDriverWait waiter;
 
     public AbstractBasePage(WebDriver driver) {
