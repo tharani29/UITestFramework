@@ -6,8 +6,8 @@ import org.openqa.selenium.WebDriver;import java.lang.InterruptedException;impor
 
 public class LoginPage extends AbstractBasePage {
 
-    public static final String SUPERUSER = "motech";
-    public static final String SUPERPASSWORD = "Ebodac!2";
+    private String UserName;
+    private String Password;
     static final By USERNAME = By.name("j_username");
     static final By PASSWORD = By.name("j_password");
     static final By LOGIN = By.cssSelector("input.btn.btn-primary");
@@ -16,6 +16,8 @@ public class LoginPage extends AbstractBasePage {
 
     public LoginPage(WebDriver driver) {
         super(driver);
+        UserName = properties.getUserName();
+        Password = properties.getPassword();
     }
 
     public void logOut() throws InterruptedException{
@@ -37,7 +39,7 @@ public class LoginPage extends AbstractBasePage {
     }
 
     public void loginAsAdmin() {
-        login(SUPERUSER, SUPERPASSWORD);
+        login(UserName, Password);
     }
 
     @Override
