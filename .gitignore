@@ -7,3 +7,11 @@ release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 .idea
+*.iml
+*.ipr
+*.iws
+.settings/
+.project
+.classpath
+.DS_Store
+felix-cache/
