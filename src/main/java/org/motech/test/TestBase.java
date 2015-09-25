@@ -50,8 +50,10 @@ public class TestBase {
     public static final String DEFAULT_ROLE = "Privilege Level: Full";
 
     private LoginPage loginPage;
+
     @BeforeClass
-    public static void startWebDriver() {
+    public static void startWebDriver() throws Exception {
+        new StartupIT().shouldStartServerAndMakeAllBundlesActive();
         driver = setupChromeDriver();
         driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
         goToLoginPage(); // TODO is this right? do we always want to go to the start page?
