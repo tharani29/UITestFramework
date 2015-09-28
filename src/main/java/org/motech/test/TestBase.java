@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
+import org.json.JSONException;
 import org.motech.page.GenericPage;
 import org.motech.page.LoginPage;
 import org.motech.page.Page;
@@ -22,6 +23,8 @@ import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+import org.motech.page.TestProperties;
+import org.motech.startup.StartupHelper;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -47,18 +50,22 @@ public class TestBase {
 
     protected static WebDriver driver;
 
+    private static TestProperties properties = TestProperties.instance();
+
+    private final static String serverURL = properties.getWebAppUrl();
+
     public static final String DEFAULT_ROLE = "Privilege Level: Full";
 
     private LoginPage loginPage;
 
     @BeforeClass
-    public static void startWebDriver() throws Exception {
-        new StartupIT().shouldStartServerAndMakeAllBundlesActive();
+    public static void startWebDriver() throws InterruptedException, JSONException, IOException {
         driver = setupChromeDriver();
         driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
-        goToLoginPage(); // TODO is this right? do we always want to go to the start page?
+        if (serverURL.equals(TestProperties.DEFAULT_WEBAPP_URL)) {
+            new StartupHelper().startUp();
+        }
     }
-
 
     @AfterClass
     public static void stopWebDriver() {

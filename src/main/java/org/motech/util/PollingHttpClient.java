@@ -1,4 +1,4 @@
-package org.motech.test;
+package org.motech.util;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
@@ -74,8 +74,6 @@ public class PollingHttpClient {
                     response = httpClient.execute(httpUriRequest);
 
                     if (responseNotFound(response, expectedErrorCode)) {
-                        if (response != null) {
-                        }
                         Thread.sleep(2 * MILLIS_PER_SEC);
                     }
                 } catch (IOException e) {
@@ -120,10 +118,3 @@ public class PollingHttpClient {
         httpClient.setCookieStore(cookieStore);
     }
 }
-
-
-
-
-
-
-
