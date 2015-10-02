@@ -50,7 +50,7 @@ public class TestBase {
 
     protected static WebDriver driver;
 
-    private static TestProperties properties = TestProperties.instance();
+    protected static TestProperties properties = TestProperties.instance();
 
     private final static String serverURL = properties.getWebAppUrl();
 
@@ -65,6 +65,7 @@ public class TestBase {
         if (serverURL.equals(TestProperties.DEFAULT_WEBAPP_URL)) {
             new StartupHelper().startUp();
         }
+        goToHomePage();
     }
 
     @AfterClass
@@ -82,9 +83,12 @@ public class TestBase {
         loginPage.loginAsAdmin();
     }
 
+    public void logout() throws Exception {
+        loginPage.logOut();
+    }
 
-    public static void goToLoginPage() {
-        currentPage().gotoPage(LoginPage.LOGIN_PATH);
+    public static void goToHomePage() {
+        currentPage().gotoPage("/home");
     }
 
     // This takes a screen (well, browser) snapshot whenever there's a failure
