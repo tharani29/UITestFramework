@@ -48,7 +48,7 @@ public class StartupHelper {
 
         JSONArray bundles = null;
 
-        int retryCount = 10;
+        int retryCount = 20;
         boolean starting = true;
 
         do {
@@ -65,10 +65,9 @@ public class StartupHelper {
                     throw e;
                 }
             }
-
-            Thread.sleep(TWO_MINUTES);
         } while (--retryCount > 0);
 
+        Thread.sleep(TWO_MINUTES);
         assertNotNull("The bundle list cannot be empty", bundles);
         assertFalse("Failed to start bundles (TIMEOUT)", starting);
         assertBundlesStatus(bundles);
