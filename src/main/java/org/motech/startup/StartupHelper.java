@@ -30,7 +30,7 @@ public class StartupHelper {
     protected static final int PORT = 8080;
     protected static final String MOTECH = "motech";
     protected static final PollingHttpClient httpClient;
-    protected static final Long TWO_MINUTES = 120 * 1000L;
+    protected static final Long ONE_MINUTE = 60 * 1000L;
 
     static {
         httpClient = new PollingHttpClient(new DefaultHttpClient(), 120);
@@ -67,7 +67,7 @@ public class StartupHelper {
             }
         } while (--retryCount > 0);
 
-        Thread.sleep(TWO_MINUTES);
+        Thread.sleep(ONE_MINUTE);
         assertNotNull("The bundle list cannot be empty", bundles);
         assertFalse("Failed to start bundles (TIMEOUT)", starting);
         assertBundlesStatus(bundles);
