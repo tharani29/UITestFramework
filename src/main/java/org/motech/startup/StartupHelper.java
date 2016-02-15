@@ -13,9 +13,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.motech.util.PollingHttpClient;
+import org.motechproject.testing.utils.PollingHttpClient;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,34 +25,37 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 public class StartupHelper {
-    protected static final String HOST = "localhost";
-    protected static final int PORT = 8080;
-    protected static final String MOTECH = "motech";
-    protected static final PollingHttpClient httpClient;
-    protected static final Long ONE_MINUTE = 60 * 1000L;
+
+    private static final PollingHttpClient HTTP_CLIENT;
+    private static final String HOST = "localhost";
+    private static final String MOTECH = "motech";
+    private static final int PORT = 8080;
+    private static final long ONE_MINUTE = 60 * 1000L;
+    private static final int WAIT_PERIOD = 120; //seconds
+    private static final int MAX_RETRIES = 20;
 
     static {
-        httpClient = new PollingHttpClient(new DefaultHttpClient(), 120);
-        httpClient.setCookieStore(new BasicCookieStore());
+        HTTP_CLIENT = new PollingHttpClient(new DefaultHttpClient(), WAIT_PERIOD);
+        HTTP_CLIENT.setCookieStore(new BasicCookieStore());
     }
 
-    public void startUp() throws IOException, InterruptedException, JSONException {
+    public void startUp() throws IOException, InterruptedException {
         waitForTomcat();
         createAdminUser();
         login();
         waitForBundles();
     }
 
-    public void waitForBundles() throws JSONException, InterruptedException, IOException {
+    public void waitForBundles() throws IOException, InterruptedException {
 
         JSONArray bundles = null;
 
-        int retryCount = 20;
+        int retryCount = MAX_RETRIES;
         boolean starting = true;
 
         do {
             try {
-                bundles = getBundleStatusFromServer(httpClient);
+                bundles = getBundleStatusFromServer(HTTP_CLIENT);
                 starting = areBundlesStillStarting(bundles);
 
                 if (!starting) {
@@ -78,13 +80,13 @@ public class StartupHelper {
 
         final HttpPost loginPost = new HttpPost(uri);
 
-        List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+        List<NameValuePair> nvps = new ArrayList<>();
         nvps.add(new BasicNameValuePair("j_username", MOTECH));
         nvps.add(new BasicNameValuePair("j_password", MOTECH));
 
         loginPost.setEntity(new UrlEncodedFormEntity(nvps, "UTF8"));
 
-        HttpResponse response = httpClient.execute(loginPost);
+        HttpResponse response = HTTP_CLIENT.execute(loginPost);
         EntityUtils.consume(response.getEntity());
     }
 
@@ -98,19 +100,17 @@ public class StartupHelper {
         HttpPost post = new HttpPost(url);
         post.setEntity(entity);
 
-        HttpResponse response = httpClient.execute(post);
+        HttpResponse response = HTTP_CLIENT.execute(post);
         EntityUtils.consume(response.getEntity());
     }
 
     protected void waitForTomcat() throws IOException, InterruptedException {
-
         String uri = String.format("http://%s:%d/motech-platform-server/module/server", HOST, PORT);
         HttpGet waitGet = new HttpGet(uri);
-        HttpResponse response = httpClient.execute(waitGet);
-
+        HTTP_CLIENT.execute(waitGet);
     }
 
-    private JSONArray getBundleStatusFromServer(PollingHttpClient httpClient) throws IOException, JSONException, InterruptedException {
+    private JSONArray getBundleStatusFromServer(PollingHttpClient httpClient) throws IOException, InterruptedException {
 
         String uri = String.format("http://%s:%d/motech-platform-server/module/admin/api/bundles", HOST, PORT);
         String response = httpClient.execute(new HttpGet(uri), new BasicResponseHandler());
@@ -120,13 +120,12 @@ public class StartupHelper {
         return new JSONArray(response);
     }
 
-    private boolean areBundlesStillStarting(JSONArray bundles) throws JSONException {
+    private boolean areBundlesStillStarting(JSONArray bundles) {
 
         for (int i = 0; i < bundles.length(); ++i) {
             JSONObject object = bundles.getJSONObject(i);
 
             String status = object.getString("state");
-            String symbolicName = object.getString("symbolicName");
 
             if ("STARTING".equalsIgnoreCase(status)) {
                 return true;
@@ -136,7 +135,7 @@ public class StartupHelper {
         return false;
     }
 
-    private void assertBundlesStatus(JSONArray bundles) throws JSONException {
+    private void assertBundlesStatus(JSONArray bundles) {
 
         for (int i = 0; i < bundles.length(); ++i) {
             JSONObject object = bundles.getJSONObject(i);
