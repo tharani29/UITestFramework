@@ -12,7 +12,7 @@ public class LoginPage extends AbstractBasePage {
     private static final By PASSWORD = By.name("j_password");
     private static final By LOGIN = By.cssSelector("input.btn.btn-primary");
 
-    public static final String LOGIN_PATH = "/login.htm";
+    public static final String LOGIN_PATH = "/module/server/login";
 
     private final String adminUsername;
     private final String adminPassword;
@@ -43,6 +43,11 @@ public class LoginPage extends AbstractBasePage {
 
     @Override
     public String expectedUrlPath() {
-        return getUrlRoot() + LOGIN_PATH;
+        return LOGIN_PATH;
+    }
+
+    @Override
+    public void goToPage() {
+        getDriver().get(getMotechUrl() + LOGIN_PATH);
     }
 }

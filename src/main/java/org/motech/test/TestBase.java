@@ -47,7 +47,6 @@ import static org.junit.Assert.assertEquals;
 public class TestBase {
 
     private static final TestProperties TEST_PROPERTIES = TestProperties.instance();
-    private static final String SERVER_URL = TEST_PROPERTIES.getWebAppUrl();
 
     private static WebDriver driver;
 
@@ -59,15 +58,16 @@ public class TestBase {
     public static void startWebDriver() throws InterruptedException, IOException {
         driver = setupChromeDriver();
         driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
-        if (SERVER_URL.equals(TestProperties.DEFAULT_WEBAPP_URL)) {
+        if (getServerUrl().equals(TestProperties.DEFAULT_SERVER_URL)) {
             new StartupHelper().startUp();
         }
-        goToHomePage();
     }
 
     @AfterClass
     public static void stopWebDriver() {
-        driver.quit();
+        if (driver != null) {
+            driver.quit();
+        }
     }
 
     @Before
@@ -76,6 +76,7 @@ public class TestBase {
     }
 
     public void login() {
+        loginPage.goToPage();
         assertPage(loginPage);
         loginPage.loginAsAdmin();
     }
@@ -84,8 +85,12 @@ public class TestBase {
         loginPage.logOut();
     }
 
-    public static void goToHomePage() {
-        currentPage().gotoPage("/home");
+    public void goToHomePage() {
+        goToPage("/");
+    }
+
+    public void goToPage(String path) {
+        driver.get(getServerUrl() + getContextPath() + path);
     }
 
     // This takes a screen (well, browser) snapshot whenever there's a failure
@@ -169,7 +174,7 @@ public class TestBase {
      * @param expected page
      */
     public static void assertPage(Page expected) {
-        assertEquals(expected.expectedUrlPath(), currentPage().urlPath());
+        assertEquals(getContextPath() + expected.expectedUrlPath(), currentPage().urlPath());
     }
 
     public void takeScreenshot(String filename) {
@@ -194,7 +199,11 @@ public class TestBase {
     }
 
     protected static String getServerUrl() {
-        return SERVER_URL;
+        return TEST_PROPERTIES.getServerUrl();
+    }
+
+    protected static String getContextPath() {
+        return TEST_PROPERTIES.getContextPath();
     }
 
     // This junit cleverness picks up the name of the test class, to be used in the chromedriver log file name.

@@ -1,7 +1,6 @@
 package org.motech.page;
 
 
-import org.apache.commons.lang.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
@@ -31,17 +30,9 @@ public abstract class AbstractBasePage implements Page {
     private TestProperties properties = TestProperties.instance();
     private WebDriverWait waiter;
 
-    private final String serverURL = properties.getWebAppUrl();
-    private final String urlRoot = "/module/" + StringUtils.substringAfterLast(serverURL, "/");
-
     public AbstractBasePage(WebDriver driver) {
         this.driver = driver;
         waiter = new WebDriverWait(driver, MAX_WAIT_SECONDS);
-    }
-
-    @Override
-    public void gotoPage(String address) {
-        driver.get(serverURL + address);
     }
 
     @Override
@@ -207,12 +198,16 @@ public abstract class AbstractBasePage implements Page {
         return properties;
     }
 
-    protected String getUrlRoot() {
-        return urlRoot;
+    protected String getServerURL() {
+        return properties.getServerUrl();
     }
 
-    protected String getServerURL() {
-        return serverURL;
+    protected String getContextPath() {
+        return properties.getContextPath();
+    }
+
+    protected String getMotechUrl() {
+        return getServerURL() + getContextPath();
     }
 
     protected WebDriver getDriver() {

@@ -7,8 +7,6 @@ import java.util.List;
 
 public interface Page {
 
-    void gotoPage(String address);
-
     WebElement findElement(By by);
 
     WebElement findElementById(String id);
@@ -82,4 +80,6 @@ public interface Page {
      * @return true if the page contains the given text anywhere on the page.
      */
     Boolean containsText(String text);
+
+    void goToPage();
 }

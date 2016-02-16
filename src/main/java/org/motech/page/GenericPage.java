@@ -6,7 +6,7 @@ import org.openqa.selenium.WebDriver;
 /**
  * A Page that represents any page, i.e. a page that we don't (yet) know which page it is.
  */
-public class GenericPage extends AbstractBasePage {
+public final class GenericPage extends AbstractBasePage {
 
     public GenericPage(WebDriver driver) {
         super(driver);
@@ -14,7 +14,10 @@ public class GenericPage extends AbstractBasePage {
 
     @Override
     public String expectedUrlPath() {
-        return null;
+        return getDriver().getCurrentUrl();
     }
 
+    @Override
+    public void goToPage() {
+    }
 }

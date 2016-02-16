@@ -12,9 +12,13 @@ public class TestProperties {
 
     private static final TestProperties SINGLETON = new TestProperties();
 
-    public static final String WEBAPP_URL_PROPERTY = "webapp.url";
+    public static final String SERVER_URL_PROPERTY = "server.url";
 
-    public static final String DEFAULT_WEBAPP_URL = "http://localhost:8080/motech-platform-server/module/server";
+    public static final String DEFAULT_SERVER_URL = "http://localhost:8080";
+
+    public static final String CONTEXT_PATH_PROPERTY = "context_path";
+
+    public static final String DEFAULT_CONTEXT_PATH = "/motech-platform-server";
 
     public static final String WEBDRIVER_PROPERTY = "webdriver";
 
@@ -38,19 +42,23 @@ public class TestProperties {
         properties = new Properties();
         try {
             URL resource = Thread.currentThread().getContextClassLoader()
-                    .getResource("org/motech/uitestframework/test.properties");
+                    .getResource("ui-test.properties");
             if (resource != null) {
                 try (InputStream input = resource.openStream()) {
                     properties.load(new InputStreamReader(input, "UTF-8"));
                 }
             }
         } catch (IOException e) {
-            throw new UITestFrameworkException("test.properties not found. Error: ", e);
+            throw new UITestFrameworkException("Error reading test properties", e);
         }
     }
 
-    public String getWebAppUrl() {
-        return getProperty(WEBAPP_URL_PROPERTY, DEFAULT_WEBAPP_URL);
+    public String getContextPath() {
+        return getProperty(CONTEXT_PATH_PROPERTY, DEFAULT_CONTEXT_PATH);
+    }
+
+    public String getServerUrl() {
+        return getProperty(SERVER_URL_PROPERTY, DEFAULT_SERVER_URL);
     }
 
     public String getUserName() {
