@@ -1,4 +1,4 @@
-package org.motech.exception;
+package org.motechproject.uitest.exception;
 
 /**
  * Signals an issue encountered by the test framework itself.

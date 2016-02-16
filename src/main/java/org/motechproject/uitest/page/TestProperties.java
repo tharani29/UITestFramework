@@ -1,6 +1,6 @@
-package org.motech.page;
+package org.motechproject.uitest.page;
 
-import org.motech.exception.UITestFrameworkException;
+import org.motechproject.uitest.exception.UITestFrameworkException;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,4 +1,4 @@
-package org.motech.page;
+package org.motechproject.uitest.page;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;

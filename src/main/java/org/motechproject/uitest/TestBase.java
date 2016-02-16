@@ -1,4 +1,4 @@
-package org.motech.test;
+package org.motechproject.uitest;
 
 
 import org.apache.commons.io.FileUtils;
@@ -16,12 +16,12 @@ import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-import org.motech.exception.UITestFrameworkException;
-import org.motech.page.GenericPage;
-import org.motech.page.LoginPage;
-import org.motech.page.Page;
-import org.motech.page.TestProperties;
-import org.motech.startup.StartupHelper;
+import org.motechproject.uitest.exception.UITestFrameworkException;
+import org.motechproject.uitest.page.GenericPage;
+import org.motechproject.uitest.page.LoginPage;
+import org.motechproject.uitest.page.Page;
+import org.motechproject.uitest.page.TestProperties;
+import org.motechproject.uitest.startup.StartupHelper;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;

@@ -1,4 +1,4 @@
-package org.motech.startup;
+package org.motechproject.uitest.startup;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
