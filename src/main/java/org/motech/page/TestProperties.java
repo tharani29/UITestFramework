@@ -1,17 +1,16 @@
 package org.motech.page;
 
+import org.motech.exception.UITestFrameworkException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Properties;
 
-import java.net.URL;
-/**
- * Created by tomasz on 23.09.15.
- */
 public class TestProperties {
 
-    private static TestProperties SINGLETON;
+    private static final TestProperties SINGLETON = new TestProperties();
 
     public static final String WEBAPP_URL_PROPERTY = "webapp.url";
 
@@ -30,9 +29,6 @@ public class TestProperties {
     public static final String DEFAULT_LOGIN_USERNAME = "motech";
 
     public static TestProperties instance() {
-        if (SINGLETON == null) {
-            SINGLETON = new TestProperties();
-        }
         return SINGLETON;
     }
 
@@ -44,20 +40,13 @@ public class TestProperties {
             URL resource = Thread.currentThread().getContextClassLoader()
                     .getResource("org/motech/uitestframework/test.properties");
             if (resource != null) {
-                System.out.println("test.properties found: " + resource.toExternalForm());
-                InputStream input = resource.openStream();
-                properties.load(new InputStreamReader(input, "UTF-8"));
-                System.out.println("test.properties:");
-                System.out.println(properties);
+                try (InputStream input = resource.openStream()) {
+                    properties.load(new InputStreamReader(input, "UTF-8"));
+                }
             }
+        } catch (IOException e) {
+            throw new UITestFrameworkException("test.properties not found. Error: ", e);
         }
-        catch (IOException ioException) {
-            throw new RuntimeException("test.properties not found. Error: ", ioException);
-        }
-        System.out.println(WEBAPP_URL_PROPERTY + ": " + getWebAppUrl());
-        System.out.println(LOGIN_USERNAME_PROPERTY + ": " + getUserName());
-        System.out.println(LOGIN_PASSWORD_PROPERTY + ": " + getPassword());
-        System.out.println(WEBDRIVER_PROPERTY + ": " + getWebDriver());
     }
 
     public String getWebAppUrl() {
@@ -74,13 +63,12 @@ public class TestProperties {
 
     public enum WebDriverType {
         chrome, firefox
-    }; // only these two for now
+    } // only these two for now
 
     public WebDriverType getWebDriver() {
         try {
             return WebDriverType.valueOf(getProperty(WEBDRIVER_PROPERTY, DEFAULT_WEBDRIVER));
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return WebDriverType.chrome;
         }
     }

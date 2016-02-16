@@ -1,20 +1,13 @@
 package org.motech.test;
 
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.concurrent.TimeUnit;
-
-import org.json.JSONException;
-import org.motech.page.GenericPage;
-import org.motech.page.LoginPage;
-import org.motech.page.Page;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.vfs2.AllFileSelector;
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
+import org.apache.commons.vfs2.VFS;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -23,6 +16,10 @@ import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+import org.motech.exception.UITestFrameworkException;
+import org.motech.page.GenericPage;
+import org.motech.page.LoginPage;
+import org.motech.page.Page;
 import org.motech.page.TestProperties;
 import org.motech.startup.StartupHelper;
 import org.openqa.selenium.OutputType;
@@ -30,39 +27,39 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.apache.commons.vfs2.FileObject;
-import org.apache.commons.vfs2.VFS;
-import org.apache.commons.vfs2.FileSystemException;
-import org.apache.commons.vfs2.AllFileSelector;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.concurrent.TimeUnit;
+
 import static org.junit.Assert.assertEquals;
 /**
  * Superclass for all UI Tests. Contains lots of handy "utilities"
  * needed to setup and tear down tests as well as handy methods
  * needed during tests, such as:
  *  - initialize Selenium WebDriver
- *  - create (and delete) test patient, @see {@link #createTestPatient()}
  *  - @see {@link #currentPage()}
  *  - @see {@link #assertPage(Page)}
- *  - @see {@link #pageContent()}
  */
 public class TestBase {
 
-    protected static WebDriver driver;
+    private static final TestProperties TEST_PROPERTIES = TestProperties.instance();
+    private static final String SERVER_URL = TEST_PROPERTIES.getWebAppUrl();
 
-    protected static TestProperties properties = TestProperties.instance();
+    private static WebDriver driver;
 
-    private final static String serverURL = properties.getWebAppUrl();
-
-    public static final String DEFAULT_ROLE = "Privilege Level: Full";
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private LoginPage loginPage;
 
     @BeforeClass
-    public static void startWebDriver() throws InterruptedException, JSONException, IOException {
+    public static void startWebDriver() throws InterruptedException, IOException {
         driver = setupChromeDriver();
         driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
-        if (serverURL.equals(TestProperties.DEFAULT_WEBAPP_URL)) {
+        if (SERVER_URL.equals(TestProperties.DEFAULT_WEBAPP_URL)) {
             new StartupHelper().startUp();
         }
         goToHomePage();
@@ -83,7 +80,7 @@ public class TestBase {
         loginPage.loginAsAdmin();
     }
 
-    public void logout() throws Exception {
+    public void logout() throws InterruptedException {
         loginPage.logOut();
     }
 
@@ -94,7 +91,7 @@ public class TestBase {
     // This takes a screen (well, browser) snapshot whenever there's a failure
     // and stores it in a "screenshots" directory.
     @Rule
-    public TestRule testWatcher = new TestWatcher() {
+    public TestRule testWatcher = new TestWatcher() { // NO CHECKSTYLE rules must be public
 
         @Override
         public void failed(Throwable t, Description test) {
@@ -102,13 +99,13 @@ public class TestBase {
         }
     };
 
-
-
     static WebDriver setupChromeDriver() {
         URL chromedriverExecutable = null;
         ClassLoader classLoader = TestBase.class.getClassLoader();
 
         String chromedriverExecutableFilename = null;
+        String chromedriverExecutablePath;
+
         if (SystemUtils.IS_OS_MAC_OSX) {
             chromedriverExecutableFilename = "chromedriver";
             chromedriverExecutable = classLoader.getResource("chromedriver/mac/chromedriver");
@@ -119,32 +116,27 @@ public class TestBase {
             chromedriverExecutableFilename = "chromedriver.exe";
             chromedriverExecutable = classLoader.getResource("chromedriver/windows/chromedriver.exe");
         }
-        String errmsg = "cannot find chromedriver executable";
-        String chromedriverExecutablePath = null;
+
         if (chromedriverExecutable == null) {
-            System.err.println(errmsg);
-            Assert.fail(errmsg);
+            throw new UITestFrameworkException("Cannot find chromedriver executable");
         } else {
             chromedriverExecutablePath = chromedriverExecutable.getPath();
             // This ugly bit checks to see if the chromedriver file is inside a jar, and if so
             // uses VFS to extract it to a temp directory.
             if (chromedriverExecutablePath.contains(".jar!")) {
-                FileObject chromedriver_vfs;
+                FileObject chromedriverVfs;
                 try {
-                    chromedriver_vfs = VFS.getManager().resolveFile(chromedriverExecutable.toExternalForm());
-                    File chromedriver_fs = new File(FileUtils.getTempDirectory(), chromedriverExecutableFilename);
-                    FileObject chromedriverUnzipped = VFS.getManager().toFileObject(chromedriver_fs);
+                    chromedriverVfs = VFS.getManager().resolveFile(chromedriverExecutable.toExternalForm());
+                    File chromedriverFs = new File(FileUtils.getTempDirectory(), chromedriverExecutableFilename);
+                    FileObject chromedriverUnzipped = VFS.getManager().toFileObject(chromedriverFs);
                     chromedriverUnzipped.delete();
-                    chromedriverUnzipped.copyFrom(chromedriver_vfs, new AllFileSelector());
-                    chromedriverExecutablePath = chromedriver_fs.getPath();
+                    chromedriverUnzipped.copyFrom(chromedriverVfs, new AllFileSelector());
+                    chromedriverExecutablePath = chromedriverFs.getPath();
                     if (!SystemUtils.IS_OS_WINDOWS) {
-                        chromedriver_fs.setExecutable(true);
+                        chromedriverFs.setExecutable(true);
                     }
-                }
-                catch (FileSystemException e) {
-                    System.err.println(errmsg + ": " + e);
-                    e.printStackTrace();
-                    Assert.fail(errmsg + ": " + e);
+                } catch (FileSystemException e) {
+                    throw new UITestFrameworkException("Unable to start the UI Test Framework", e);
                 }
             }
         }
@@ -152,12 +144,11 @@ public class TestBase {
         String chromedriverFilesDir = "target/chromedriverlogs";
         try {
             FileUtils.forceMkdir(new File(chromedriverFilesDir));
-        }
-        catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            throw new UITestFrameworkException("Unable to start the UI Test Framework", e);
         }
         System.setProperty(ChromeDriverService.CHROME_DRIVER_LOG_PROPERTY, chromedriverFilesDir + "/chromedriver-"
-                + TestClassName.name + ".log");
+                + testClassName.name + ".log");
         driver = new ChromeDriver();
         return driver;
     }
@@ -185,17 +176,34 @@ public class TestBase {
         File tempFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
         try {
             FileUtils.copyFile(tempFile, new File("target/screenshots/" + filename + ".png"));
+        } catch (IOException e) {
+            throw new UITestFrameworkException("Unable to take screenshot", e);
         }
-        catch (IOException e) {}
+    }
+
+    protected Logger getLogger() {
+        return logger;
+    }
+
+    protected static WebDriver getDriver() {
+        return driver;
+    }
+
+    protected static TestProperties getTestProperties() {
+        return TEST_PROPERTIES;
+    }
+
+    protected static String getServerUrl() {
+        return SERVER_URL;
     }
 
     // This junit cleverness picks up the name of the test class, to be used in the chromedriver log file name.
     @ClassRule
-    public static TestClassName TestClassName = new TestClassName();
+    public static TestClassName testClassName = new TestClassName(); // NO CHECKSTYLE rules must be public
 
     static class TestClassName implements TestRule {
 
-        public String name;
+        private String name;
 
         @Override
         public Statement apply(Statement statement, Description description) {
@@ -203,15 +211,5 @@ public class TestBase {
             return statement;
         }
     }
-
-    public String patientIdFromUrl() {
-        String url = driver.getCurrentUrl();
-        return StringUtils.substringAfter(url, "patientId=");
-    }
-
-
-
-
-
 }
 

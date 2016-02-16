@@ -1,11 +1,7 @@
 package org.motech.page;
 
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
@@ -17,33 +13,35 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+
 /**
  * A superclass for "real" pages. Has lots of handy methods for accessing
  * elements, clicking, filling fields. etc.
  */
 public abstract class AbstractBasePage implements Page {
 
-    public final String URL_ROOT;
     public static final int MAX_WAIT_SECONDS = 60;
+    public static final int TEN_SECONDS = 10000;
+    public static final int HALF_SECOND = 500;
 
-    protected WebDriver driver;
-    protected TestProperties properties = TestProperties.instance();
-    private final String serverURL=properties.getWebAppUrl();
-    protected WebDriverWait waiter;
+    private WebDriver driver;
+    private TestProperties properties = TestProperties.instance();
+    private WebDriverWait waiter;
+
+    private final String serverURL = properties.getWebAppUrl();
+    private final String urlRoot = "/module/" + StringUtils.substringAfterLast(serverURL, "/");
 
     public AbstractBasePage(WebDriver driver) {
         this.driver = driver;
-        URL_ROOT = "/module/" + StringUtils.substringAfterLast(serverURL, "/");
         waiter = new WebDriverWait(driver, MAX_WAIT_SECONDS);
     }
 
     @Override
     public void gotoPage(String address) {
         driver.get(serverURL + address);
-    }
-
-    public void go() {
-        driver.get(StringUtils.removeEnd(serverURL, URL_ROOT) + expectedUrlPath());
     }
 
     @Override
@@ -82,23 +80,13 @@ public abstract class AbstractBasePage implements Page {
         setText(findTextFieldInsideSpan(spanId), text);
     }
 
-    private void setText(WebElement element, String text) {
-        setTextNoEnter(element, text);
-        element.sendKeys(Keys.RETURN);
-    }
-
-    private void setTextNoEnter(WebElement element, String text) {
-        element.clear();
-        element.sendKeys(text);
-    }
-
     @Override
     public void clickOn(By by) {
         findElement(by).click();
     }
 
     @Override
-    public void selectFrom(By by, String value){
+    public void selectFrom(By by, String value) {
         Select droplist = new Select(findElement(by));
         droplist.selectByVisibleText(value);
     }
@@ -110,10 +98,6 @@ public abstract class AbstractBasePage implements Page {
         hover.perform();
     }
 
-    private WebElement findTextFieldInsideSpan(String spanId) {
-        return findElementById(spanId).findElement(By.tagName("input"));
-    }
-
     @Override
     public String title() {
         return getText(By.tagName("title"));
@@ -123,8 +107,7 @@ public abstract class AbstractBasePage implements Page {
     public String urlPath() {
         try {
             return new URL(driver.getCurrentUrl()).getPath();
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             return null;
         }
     }
@@ -143,7 +126,7 @@ public abstract class AbstractBasePage implements Page {
     @Override
     public abstract String expectedUrlPath();
 
-    public void clickOnLinkFromHref(String href) throws InterruptedException{
+    public void clickOnLinkFromHref(String href) throws InterruptedException {
         // We allow use of xpath here because href's tend to be quite stable.
         clickWhenVisible(byFromHref(href));
     }
@@ -174,7 +157,7 @@ public abstract class AbstractBasePage implements Page {
         waiter.until(new ExpectedCondition<Boolean>() {
             @Override
             public Boolean apply(WebDriver driver) {
-                return (Boolean) ((JavascriptExecutor)driver).executeScript("return " + varName, new Object[] {});
+                return (Boolean) ((JavascriptExecutor) driver).executeScript("return " + varName);
             }
         });
     }
@@ -187,12 +170,12 @@ public abstract class AbstractBasePage implements Page {
         waiter.until(ExpectedConditions.elementToBeClickable(by));
     }
 
-    boolean hasFocus(String id) {
-        return (Boolean) ((JavascriptExecutor)driver).executeScript("return jQuery('#" + id +  "').is(':focus')", new Object[] {});
+    public boolean hasFocus(String id) {
+        return (Boolean) ((JavascriptExecutor) driver).executeScript("return jQuery('#" + id +  "').is(':focus')");
     }
 
     boolean hasFocus(String tag, String attr, String value) {
-        return (Boolean) ((JavascriptExecutor)driver).executeScript("return jQuery('" + tag + "[" + attr + "=" + value + "]').is(':focus')", new Object[] {});
+        return (Boolean) ((JavascriptExecutor) driver).executeScript("return jQuery('" + tag + "[" + attr + "=" + value + "]').is(':focus')");
     }
 
     public void waitForElement(By by) {
@@ -209,15 +192,48 @@ public abstract class AbstractBasePage implements Page {
 
     public void clickWhenVisible(By by) throws InterruptedException {
         Long startTime = System.currentTimeMillis();
-        while((System.currentTimeMillis() - startTime) < 10000) {
+        while ((System.currentTimeMillis() - startTime) < TEN_SECONDS) {
             try {
                 clickOn(by);
                 break;
             } catch (Exception e) {
-                Thread.sleep(500);
+                Thread.sleep(HALF_SECOND);
             }
         }
 
     }
 
+    protected TestProperties getProperties() {
+        return properties;
+    }
+
+    protected String getUrlRoot() {
+        return urlRoot;
+    }
+
+    protected String getServerURL() {
+        return serverURL;
+    }
+
+    protected WebDriver getDriver() {
+        return driver;
+    }
+
+    protected WebDriverWait getWaiter() {
+        return waiter;
+    }
+
+    private void setText(WebElement element, String text) {
+        setTextNoEnter(element, text);
+        element.sendKeys(Keys.RETURN);
+    }
+
+    private void setTextNoEnter(WebElement element, String text) {
+        element.clear();
+        element.sendKeys(text);
+    }
+
+    private WebElement findTextFieldInsideSpan(String spanId) {
+        return findElementById(spanId).findElement(By.tagName("input"));
+    }
 }
