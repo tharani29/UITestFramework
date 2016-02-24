@@ -3,6 +3,11 @@ package org.motechproject.uitest.page;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
+/**
+ * A class that represents data services page. Has methods which check functionality of
+ * data browser, schema editor and data services settings.
+ */
+
 public class DataServicesPage extends AbstractBasePage {
 
     public static final By ENTITY_NAME_FIELD = By.name("inputEntityName");
@@ -12,6 +17,7 @@ public class DataServicesPage extends AbstractBasePage {
     public static final By SCHEMA_EDITOR_BUTTON = By.id("schemaEditor");
     public static final By BROWSE_INSTANCES_BUTTON = By.id("browseInstancesButton");
     public static final By ADD_NEW_INSTANCE_BUTTON = By.id("addNewInstanceButton");
+    public static final By ENTITY_SPAN = By.id("select2-chosen-2");
 
     public static final String HOME_PATH = "/module/server/home#";
 
@@ -19,7 +25,7 @@ public class DataServicesPage extends AbstractBasePage {
         super(driver);
     }
 
-    public void createNewEntity(String entityName) throws InterruptedException {
+    public String createNewEntity(String entityName) throws InterruptedException {
         waitForElement(DATA_SERVICES_BUTTON);
         clickWhenVisible(DATA_SERVICES_BUTTON);
         waitForElement(SCHEMA_EDITOR_BUTTON);
@@ -31,6 +37,8 @@ public class DataServicesPage extends AbstractBasePage {
         waitForElement(SAVE_ENTITY_BUTTON);
         clickOn(SAVE_ENTITY_BUTTON);
         waitForElement(BROWSE_INSTANCES_BUTTON);
+        waitForElement(ENTITY_SPAN);
+        return getText(ENTITY_SPAN);
     }
 
     public void goToEntityTable(String entityName) throws InterruptedException {
