@@ -25,6 +25,11 @@ public class DataServicesPage extends AbstractBasePage {
         super(driver);
     }
 
+    /**
+     * Method creates new entity in MDS schema editor.
+     * @param entityName new entity name
+     * @return method returns text that appears in schema editor entity input after creating new entity, should be the same as new entity name, should be checked in tests
+     */
     public String createNewEntity(String entityName) throws InterruptedException {
         waitForElement(DATA_SERVICES_BUTTON);
         clickWhenVisible(DATA_SERVICES_BUTTON);
@@ -41,6 +46,10 @@ public class DataServicesPage extends AbstractBasePage {
         return getText(ENTITY_SPAN);
     }
 
+    /**
+     * Method that goes to data services page and enters entity table.
+     * @param entityName name of entity table that we want to enter
+     */
     public void goToEntityTable(String entityName) throws InterruptedException {
         waitForElement(DATA_SERVICES_BUTTON);
         clickWhenVisible(DATA_SERVICES_BUTTON);
