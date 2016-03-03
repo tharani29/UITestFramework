@@ -13,8 +13,8 @@ public class DataServicesPage extends AbstractBasePage {
     public static final By ENTITY_NAME_FIELD = By.name("inputEntityName");
     public static final By NEW_ENTITY_BUTTON = By.id("newEntityButton");
     public static final By SAVE_ENTITY_BUTTON = By.id("saveNewEntityButton");
-    public static final By DATA_SERVICES_BUTTON = By.id("data-services");
-    public static final By SCHEMA_EDITOR_BUTTON = By.id("schemaEditor");
+    public static final By DATA_SERVICES_BUTTON = By.id("modulelink_data-services");
+    public static final By SCHEMA_EDITOR_BUTTON = By.id("mdsTab_schemaEditor");
     public static final By BROWSE_INSTANCES_BUTTON = By.id("browseInstancesButton");
     public static final By ADD_NEW_INSTANCE_BUTTON = By.id("addNewInstanceButton");
     public static final By ENTITY_SPAN = By.id("select2-chosen-2");
