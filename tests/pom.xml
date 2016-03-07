@@ -16,7 +16,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.motech</groupId>
+            <groupId>org.motechproject</groupId>
             <artifactId>motech-uitestframework</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
