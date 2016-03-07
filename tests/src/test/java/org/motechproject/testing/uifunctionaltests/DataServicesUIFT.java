@@ -28,7 +28,7 @@ public class DataServicesUIFT extends TestBase {
     @Test
     public void newEntityTest () throws Exception {
         dataServicesPage.goToPage();
-        assertEquals(dataServicesPage.createNewEntity(ENTITY_NAME), ENTITY_NAME);
+        assertEquals(ENTITY_NAME, dataServicesPage.createNewEntity(ENTITY_NAME));
         dataServicesPage.goToPage();
         dataServicesPage.goToEntityTable(ENTITY_NAME);
     }
