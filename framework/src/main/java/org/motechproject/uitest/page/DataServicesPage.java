@@ -31,18 +31,13 @@ public class DataServicesPage extends AbstractBasePage {
      * @return method returns text that appears in schema editor entity input after creating new entity, should be the same as new entity name, should be checked in tests
      */
     public String createNewEntity(String entityName) throws InterruptedException {
-        waitForElement(DATA_SERVICES_BUTTON);
         clickWhenVisible(DATA_SERVICES_BUTTON);
-        waitForElement(SCHEMA_EDITOR_BUTTON);
         clickWhenVisible(SCHEMA_EDITOR_BUTTON);
-        waitForElement(NEW_ENTITY_BUTTON);
         clickWhenVisible(NEW_ENTITY_BUTTON);
         waitForElement(ENTITY_NAME_FIELD);
         setTextToFieldNoEnter(ENTITY_NAME_FIELD, entityName);
-        waitForElement(SAVE_ENTITY_BUTTON);
-        clickOn(SAVE_ENTITY_BUTTON);
+        clickWhenVisible(SAVE_ENTITY_BUTTON);
         waitForElement(BROWSE_INSTANCES_BUTTON);
-        waitForElement(ENTITY_SPAN);
         return getText(ENTITY_SPAN);
     }
 
@@ -51,9 +46,7 @@ public class DataServicesPage extends AbstractBasePage {
      * @param entityName name of entity table that we want to enter
      */
     public void goToEntityTable(String entityName) throws InterruptedException {
-        waitForElement(DATA_SERVICES_BUTTON);
         clickWhenVisible(DATA_SERVICES_BUTTON);
-        waitForElement(By.id(String.format("entity_%s", entityName)));
         clickWhenVisible(By.id(String.format("entity_%s", entityName)));
         waitForElement(ADD_NEW_INSTANCE_BUTTON);
     }
